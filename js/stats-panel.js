@@ -15,11 +15,20 @@ const $ = (id) => document.getElementById(id);
 
 /* ── open / close ──────────────────────────────────────────────── */
 
+export function togglePanel() {
+    if (panelOpen) {
+        closePanel();
+    } else {
+        openPanel();
+    }
+}
+
 export function openPanel() {
     const panel = $('stats-panel');
     if (!panel || panelOpen) return;
     panelOpen = true;
     panel.classList.add('open');
+    document.body.classList.add('stats-open');
 
     // Pause game silently (no overlay)
     const g = window.game;
@@ -36,6 +45,7 @@ export function closePanel() {
     if (!panel || !panelOpen) return;
     panelOpen = false;
     panel.classList.remove('open');
+    document.body.classList.remove('stats-open');
 
     // Resume game
     const g = window.game;
@@ -184,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnStats) {
         btnStats.addEventListener('click', () => {
             if (chk && chk.checked) {
-                openPanel();
+                togglePanel();
             } else {
                 window.location.href = 'stats.html';
             }
