@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TETRIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../Styles/Style.css" />
+</head>
+<body>
+
+  <div class="crt">
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <header class="game-header">
+      <span class="header-title">TETRIS</span>
+      <span id="fb-status" class="fb-status">⬤ OFFLINE</span>
+    </header>
+
+    <main class="game-wrapper">
+
+      <aside class="panel panel--left">
+        <div class="stat-box">
+          <span class="stat-label">SCORE</span>
+          <span class="stat-value" id="score">000000</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">HI-SCORE</span>
+          <span class="stat-value" id="hiscore">000000</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">LINES</span>
+          <span class="stat-value" id="lines">0000</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">LEVEL</span>
+          <span class="stat-value" id="level">01</span>
+        </div>
+      </aside>
+
+      <div class="board-wrapper">
+        <canvas id="board" width="300" height="600"></canvas>
+
+        <div class="overlay" id="overlay-start">
+          <h1 class="overlay-title">TETRIS</h1>
+          <p class="overlay-sub">— INSERT COIN —</p>
+          <button class="btn" id="btn-start">START</button>
+        </div>
+
+        <div class="overlay overlay--hidden" id="overlay-gameover">
+          <h1 class="overlay-title overlay-title--red">GAME<br>OVER</h1>
+          <div class="result-grid">
+            <span>SCORE</span><span id="result-score">0</span>
+            <span>LINES</span><span id="result-lines">0</span>
+            <span>LEVEL</span><span id="result-level">0</span>
+          </div>
+          <button class="btn" id="btn-restart">RETRY</button>
+        </div>
+
+        <div class="overlay overlay--hidden" id="overlay-pause">
+          <h1 class="overlay-title">PAUSED</h1>
+          <button class="btn" id="btn-resume">RESUME</button>
+        </div>
+
+        <div class="overlay overlay--hidden overlay--flash" id="overlay-tetris">
+          <h1 class="overlay-title overlay-title--gold">TETRIS!</h1>
+        </div>
+      </div>
+
+      <aside class="panel panel--right">
+        <div class="next-box">
+          <span class="stat-label">NEXT</span>
+          <canvas id="next" width="108" height="108"></canvas>
+        </div>
+        <button class="btn btn--sm" id="btn-pause">PAUSE</button>
+        <div class="controls-hint">
+          <p>← → MOVER</p>
+          <p>↑/Z ROTAR</p>
+          <p>↓ BAJAR</p>
+          <p>␣ DROP</p>
+          <p>P PAUSA</p>
+        </div>
+      </aside>
+
+    </main>
+
+    <div class="touch-controls" id="touch-controls">
+      <button class="touch-btn" id="t-left">◀</button>
+      <div class="touch-mid">
+        <button class="touch-btn" id="t-rotate">↺</button>
+        <button class="touch-btn" id="t-soft">▼</button>
+      </div>
+      <button class="touch-btn" id="t-right">▶</button>
+      <button class="touch-btn touch-btn--drop" id="t-drop">DROP</button>
+    </div>
+
+  </div>
+
+  <script type="module" src="../Scripts/Game.js"></script>
+</body>
+</html>
