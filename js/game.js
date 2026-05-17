@@ -4,20 +4,27 @@ import {
     getHighScore,
 } from './Tracker.js';
 
+import {
+    unlockAudio,
+    sfxMove, sfxRotate, sfxLock, sfxDrop,
+    sfxLineClear, sfxTetris, sfxLevelUp,
+    sfxGameOver, sfxSoftDrop, sfxStart,
+} from './SFX.js';
+
 // --- constants ---
 
 const COLS = 10;
 const ROWS = 20;
-const BLOCK = 30;
+const BLOCK = 40;  // bigger blocks (was 30)
 
 const TETROMINOES = [
-    { shape: [[1, 1, 1, 1]], color: '#00f5ff' }, // I
-    { shape: [[1, 1], [1, 1]], color: '#ffd60a' }, // O
-    { shape: [[0, 1, 0], [1, 1, 1]], color: '#bf5af2' }, // T
-    { shape: [[0, 1, 1], [1, 1, 0]], color: '#30d158' }, // S
-    { shape: [[1, 1, 0], [0, 1, 1]], color: '#ff375f' }, // Z
-    { shape: [[1, 0, 0], [1, 1, 1]], color: '#0a84ff' }, // J
-    { shape: [[0, 0, 1], [1, 1, 1]], color: '#ff9f0a' }, // L
+    { shape: [[1, 1, 1, 1]], color: '#c77dff' }, // I  — primary purple
+    { shape: [[1, 1], [1, 1]], color: '#ffd60a' }, // O  — yellow
+    { shape: [[0, 1, 0], [1, 1, 1]], color: '#9d4edd' }, // T  — deep purple
+    { shape: [[0, 1, 1], [1, 1, 0]], color: '#30d158' }, // S  — green
+    { shape: [[1, 1, 0], [0, 1, 1]], color: '#ff375f' }, // Z  — pink
+    { shape: [[1, 0, 0], [1, 1, 1]], color: '#7b2ff7' }, // J  — indigo
+    { shape: [[0, 0, 1], [1, 1, 1]], color: '#ff9f0a' }, // L  — orange
 ];
 
 const SCORE_TABLE = [0, 100, 300, 500, 800];
@@ -92,6 +99,7 @@ class Tetris {
     }
 
     async start() {
+        unlockAudio();
         this.board = this._newBoard();
         this.score = 0;
         this.lines = 0;
@@ -103,6 +111,7 @@ class Tetris {
         this._spawn();
         this._updateUI();
         trackGameStart();
+        sfxStart();
         this._startTimer();
         this._raf = requestAnimationFrame(() => this._drawLoop());
     }
@@ -128,8 +137,18 @@ class Tetris {
 
     // --- actions ---
 
-    moveLeft() { if (this._ok() && !this._collides(this.current, -1, 0)) this.current.x--; }
-    moveRight() { if (this._ok() && !this._collides(this.current, 1, 0)) this.current.x++; }
+    moveLeft() {
+        if (this._ok() && !this._collides(this.current, -1, 0)) {
+            this.current.x--;
+            sfxMove();
+        }
+    }
+    moveRight() {
+        if (this._ok() && !this._collides(this.current, 1, 0)) {
+            this.current.x++;
+            sfxMove();
+        }
+    }
 
     rotate() {
         if (!this._ok()) return;
@@ -139,6 +158,7 @@ class Tetris {
         for (const dx of [0, -1, 1, -2, 2]) {
             if (!this._collides(this.current, dx, 0)) {
                 this.current.x += dx;
+                sfxRotate();
                 return;
             }
         }
@@ -150,6 +170,7 @@ class Tetris {
         if (!this._collides(this.current, 0, 1)) {
             this.current.y++;
             this.score += 1;
+            sfxSoftDrop();
         } else {
             this._lock();
         }
@@ -161,6 +182,7 @@ class Tetris {
         let dropped = 0;
         while (!this._collides(this.current, 0, 1)) { this.current.y++; dropped++; }
         this.score += dropped * 2;
+        sfxDrop();
         this._lock();
     }
 
@@ -171,6 +193,7 @@ class Tetris {
     _lock() {
         for (const [x, y] of this.current.cells())
             if (y >= 0) this.board[y][x] = this.current.color;
+        sfxLock();
         this._clearLines();
         this._spawn();
         this._updateUI();
@@ -178,17 +201,39 @@ class Tetris {
 
     _clearLines() {
         let cleared = 0;
+        const clearedRows = [];
         for (let r = ROWS - 1; r >= 0; r--) {
             if (this.board[r].every(c => c !== null)) {
-                this.board.splice(r, 1);
-                this.board.unshift(Array(COLS).fill(null));
+                clearedRows.push(r);
                 cleared++;
-                r++;
             }
         }
+
         if (!cleared) return;
 
-        this.score += SCORE_TABLE[Math.min(cleared, 4)] * this.level;
+        // Calculate score earned
+        const earned = SCORE_TABLE[Math.min(cleared, 4)] * this.level;
+
+        // Spawn explosion particles & score popup from cleared rows
+        this._spawnLineExplosions(clearedRows, earned);
+
+        // Screen shake
+        this._screenShake(cleared >= 4 ? 'hard' : 'normal');
+
+        // Sound effects
+        if (cleared === 4) {
+            sfxTetris();
+        } else {
+            sfxLineClear(cleared);
+        }
+
+        // Actually remove the rows
+        for (const r of clearedRows) {
+            this.board.splice(r, 1);
+            this.board.unshift(Array(COLS).fill(null));
+        }
+
+        this.score += earned;
         this.lines += cleared;
         trackLinesCleared(cleared, this.score);
 
@@ -197,9 +242,76 @@ class Tetris {
         const newLevel = Math.floor(this.lines / 10) + 1;
         if (newLevel > this.level) {
             this.level = newLevel;
+            sfxLevelUp();
             trackLevelUp(this.level);
             this._restartTimer();
         }
+    }
+
+    // --- JUICE: explosions, particles, screen shake ---
+
+    _spawnLineExplosions(rows, earned) {
+        const wrapper = document.getElementById('board-wrapper');
+        if (!wrapper) return;
+
+        // Calculate average row for score popup position
+        const avgRow = rows.reduce((a, b) => a + b, 0) / rows.length;
+        const popupY = avgRow * BLOCK;
+        const popupX = (COLS * BLOCK) / 2;
+
+        // Score popup
+        const popup = document.createElement('div');
+        popup.className = 'line-score-popup';
+        popup.textContent = `+${earned}`;
+        popup.style.left = `${popupX}px`;
+        popup.style.top = `${popupY}px`;
+        popup.style.transform = 'translateX(-50%)';
+        wrapper.appendChild(popup);
+        setTimeout(() => popup.remove(), 1100);
+
+        // Explosion particles for each cleared row
+        for (const row of rows) {
+            const y = row * BLOCK + BLOCK / 2;
+            const particleCount = 16;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'line-explosion-particle';
+                const x = Math.random() * (COLS * BLOCK);
+                const dx = (Math.random() - 0.5) * 180;
+                const dy = (Math.random() - 0.5) * 120 - 30;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.setProperty('--dx', `${dx}px`);
+                particle.style.setProperty('--dy', `${dy}px`);
+
+                // Random purple/gold/white colors
+                const colors = ['#c77dff', '#e0aaff', '#ffd700', '#ffffff', '#9d4edd'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                wrapper.appendChild(particle);
+                setTimeout(() => particle.remove(), 700);
+            }
+
+            // Row flash overlay
+            const flash = document.createElement('div');
+            flash.className = 'row-flash';
+            flash.style.top = `${row * BLOCK + 2}px`;
+            flash.style.width = `${COLS * BLOCK}px`;
+            wrapper.appendChild(flash);
+            setTimeout(() => flash.remove(), 350);
+        }
+    }
+
+    _screenShake(intensity = 'normal') {
+        const crt = document.getElementById('crt-root');
+        if (!crt) return;
+        const cls = intensity === 'hard' ? 'shake-hard' : 'shake';
+        crt.classList.remove('shake', 'shake-hard');
+        // Force reflow so animation restarts
+        void crt.offsetWidth;
+        crt.classList.add(cls);
+        const dur = intensity === 'hard' ? 500 : 350;
+        setTimeout(() => crt.classList.remove(cls), dur);
     }
 
     _flashTetris() {
@@ -228,6 +340,7 @@ class Tetris {
         clearInterval(this._timer);
         cancelAnimationFrame(this._raf);
         this._draw();
+        sfxGameOver();
 
         document.getElementById('result-score').textContent = this.score;
         document.getElementById('result-lines').textContent = this.lines;
@@ -273,12 +386,18 @@ class Tetris {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // grid lines
-        ctx.strokeStyle = 'rgba(0, 245, 255, 0.04)';
-        ctx.lineWidth = 0.5;
-        for (let r = 0; r < ROWS; r++)
-            for (let c = 0; c < COLS; c++)
+        // grid lines – ASCII-style dot grid
+        ctx.fillStyle = 'rgba(199, 125, 255, 0.06)';
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                // draw a small dot at each grid intersection
+                ctx.fillRect(c * BLOCK, r * BLOCK, 1, 1);
+                // subtle cell outline
+                ctx.strokeStyle = 'rgba(199, 125, 255, 0.035)';
+                ctx.lineWidth = 0.5;
                 ctx.strokeRect(c * BLOCK, r * BLOCK, BLOCK, BLOCK);
+            }
+        }
 
         // locked cells
         for (let r = 0; r < ROWS; r++)
@@ -292,8 +411,8 @@ class Tetris {
         for (const [x, y] of this.current.cells()) {
             const gr = gy + (y - this.current.y);
             if (gr >= 0 && gr !== y) {
-                ctx.fillStyle = 'rgba(255,255,255,0.07)';
-                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                ctx.fillStyle = 'rgba(199, 125, 255, 0.08)';
+                ctx.strokeStyle = 'rgba(199, 125, 255, 0.14)';
                 ctx.lineWidth = 1;
                 ctx.fillRect(x * BLOCK + 1, gr * BLOCK + 1, BLOCK - 2, BLOCK - 2);
                 ctx.strokeRect(x * BLOCK + 1, gr * BLOCK + 1, BLOCK - 2, BLOCK - 2);
@@ -309,14 +428,28 @@ class Tetris {
 
     _drawBlock(ctx, col, row, color, size) {
         const x = col * size, y = row * size;
+
+        // ASCII / retrofuturistic block style
+        // Solid fill
         ctx.fillStyle = color;
         ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.28)';
-        ctx.fillRect(x + 2, y + 2, size - 4, 3);
-        ctx.fillRect(x + 2, y + 2, 3, size - 4);
-        ctx.fillStyle = 'rgba(0,0,0,0.35)';
-        ctx.fillRect(x + 2, y + size - 4, size - 4, 3);
-        ctx.fillRect(x + size - 4, y + 2, 3, size - 4);
+
+        // Highlight edge (top + left) — more geometric, less glossy
+        ctx.fillStyle = 'rgba(255,255,255,0.22)';
+        ctx.fillRect(x + 2, y + 2, size - 4, 2);
+        ctx.fillRect(x + 2, y + 2, 2, size - 4);
+
+        // Shadow edge (bottom + right)
+        ctx.fillStyle = 'rgba(0,0,0,0.30)';
+        ctx.fillRect(x + 2, y + size - 4, size - 4, 2);
+        ctx.fillRect(x + size - 4, y + 2, 2, size - 4);
+
+        // Inner character mark – ASCII feel: a small symbol
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.font = `${Math.floor(size * 0.35)}px "Press Start 2P", monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('■', x + size / 2, y + size / 2 + 1);
     }
 
     _drawNext() {
@@ -327,7 +460,7 @@ class Tetris {
         if (!this.next) return;
 
         const s = this.next.shape;
-        const bk = 24;
+        const bk = 28;
         const ox = Math.floor((W - s[0].length * bk) / 2);
         const oy = Math.floor((H - s.length * bk) / 2);
 
@@ -339,7 +472,7 @@ class Tetris {
                     ctx.fillStyle = this.next.color;
                     ctx.fillRect(ox + c * bk + 1, oy + r * bk + 1, bk - 2, bk - 2);
                     ctx.shadowBlur = 0;
-                    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+                    ctx.fillStyle = 'rgba(255,255,255,0.22)';
                     ctx.fillRect(ox + c * bk + 2, oy + r * bk + 2, bk - 4, 2);
                 }
     }

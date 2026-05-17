@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="style.css" /></head>
 <body>
 
-  <div class="crt">
+  <div class="crt" id="crt-root">
     <div class="scanlines"></div>
     <div class="vignette"></div>
 
@@ -39,8 +39,8 @@
         </div>
       </aside>
 
-      <div class="board-wrapper">
-        <canvas id="board" width="300" height="600"></canvas>
+      <div class="board-wrapper" id="board-wrapper">
+        <canvas id="board" width="400" height="800"></canvas>
 
         <div class="overlay" id="overlay-start">
           <h1 class="overlay-title">TETRIS</h1>
@@ -71,7 +71,7 @@
       <aside class="panel panel--right">
         <div class="next-box">
           <span class="stat-label">NEXT</span>
-          <canvas id="next" width="108" height="108"></canvas>
+          <canvas id="next" width="130" height="130"></canvas>
         </div>
         <button class="btn btn--sm" id="btn-pause">PAUSE</button>
         <div class="controls-hint">
