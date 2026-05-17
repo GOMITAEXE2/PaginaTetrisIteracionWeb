@@ -5,8 +5,7 @@
 
 import { db } from './firebase-config.js';
 import {
-    collection, doc, query, orderBy, limit,
-    onSnapshot
+    collection, doc, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 let unsubs = [];
@@ -70,11 +69,12 @@ function startListeners() {
         }, (err) => console.warn('stats-panel global:', err.message))
     );
 
-    // B+D) Sessions (all, for analysis; recent 10 derived client-side)
-    const sessQ = query(collection(db, 'sessions'), orderBy('startTime', 'desc'), limit(50));
+    // B+D) Sessions — NO orderBy, sort client-side
     unsubs.push(
-        onSnapshot(sessQ, (snap) => {
+        onSnapshot(collection(db, 'sessions'), (snap) => {
             const sessions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            // Sort by startTime desc
+            sessions.sort((a, b) => (b.startTime || '').localeCompare(a.startTime || ''));
             renderRecent(sessions.slice(0, 8));
             renderAnalysis(sessions);
         }, (err) => console.warn('stats-panel sessions:', err.message))

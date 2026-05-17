@@ -287,35 +287,50 @@
   <script type="module">
     import { db } from './js/firebase-config.js';
     import {
-      collection, doc, query, orderBy, limit,
-      onSnapshot
+      collection, doc, onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
     const $ = (id) => document.getElementById(id);
 
+    function showError(ids, msg) {
+      for (const id of ids) {
+        const el = $(id);
+        if (el) el.innerHTML = `<p class="sp-page-empty" style="color:var(--pink)">${msg}</p>`;
+      }
+    }
+
     if (!db) {
-      $('gs-cards').innerHTML = '<p class="sp-page-empty">Firebase no conectado.</p>';
+      showError(['gs-cards','gs-recent','gs-ranking','gs-analysis'], 'Firebase no conectado.');
     } else {
       // A) Global stats — real-time
       onSnapshot(doc(db, 'stats', 'global'), (snap) => {
         const d = snap.exists() ? snap.data() : {};
         renderGlobal(d);
       }, (err) => {
-        console.warn('stats global:', err.message);
-        $('gs-cards').innerHTML = '<p class="sp-page-empty">Error al conectar</p>';
+        console.error('stats global:', err);
+        showError(['gs-cards'], 'Error: ' + err.message);
       });
 
-      // B + C + D) All sessions — derive recent, ranking, and analysis
-      const sessQ = query(collection(db, 'sessions'), orderBy('startTime', 'desc'));
-      onSnapshot(sessQ, (snap) => {
+      // B + C + D) All sessions — NO orderBy to avoid index requirement
+      // Sort client-side instead
+      onSnapshot(collection(db, 'sessions'), (snap) => {
         const sessions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderRecent(sessions.slice(0, 10));
-        // Ranking: sort by score desc
-        const byScore = [...sessions].sort((a, b) => (b.finalScore || 0) - (a.finalScore || 0));
+
+        // Sort by startTime desc for recent sessions
+        const byDate = [...sessions].sort((a, b) =>
+          (b.startTime || '').localeCompare(a.startTime || ''));
+        renderRecent(byDate.slice(0, 10));
+
+        // Sort by score desc for ranking
+        const byScore = [...sessions].sort((a, b) =>
+          (b.finalScore || 0) - (a.finalScore || 0));
         renderRanking(byScore.slice(0, 10));
+
+        // Analysis from all sessions
         renderAnalysis(sessions);
       }, (err) => {
-        console.warn('stats sessions:', err.message);
+        console.error('stats sessions:', err);
+        showError(['gs-recent','gs-ranking','gs-analysis'], 'Error: ' + err.message);
       });
     }
 
