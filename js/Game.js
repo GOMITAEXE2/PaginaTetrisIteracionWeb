@@ -2,7 +2,7 @@ import {
     trackGameStart, trackGameOver,
     trackLinesCleared, trackLevelUp,
     getHighScore,
-} from '../Scripts/Tracker.js';
+} from './Tracker.js';
 
 // --- constants ---
 
