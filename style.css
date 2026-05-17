@@ -702,22 +702,43 @@ body {
     right: 0;
 }
 
-/* Push the game to the left half */
+/* Push the game to the left half — NO scaling */
 body.stats-open {
-    justify-content: center;
+    justify-content: flex-start;
     transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.stats-open .crt {
-    transform: scale(0.78);
-    transform-origin: center center;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     margin-right: 50vw;
+    transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Rearrange: stack both panels on the left, board on the right */
+body.stats-open .game-wrapper {
+    display: grid;
+    grid-template-columns: 150px auto;
+    grid-template-rows: auto auto;
+    gap: 12px;
+}
+
+body.stats-open .panel--left {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+body.stats-open .panel--right {
+    grid-column: 1;
+    grid-row: 2;
+    width: 150px;
+}
+
+body.stats-open .board-wrapper {
+    grid-column: 2;
+    grid-row: 1 / 3;
 }
 
 .crt {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sp-header {
