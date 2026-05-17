@@ -680,13 +680,13 @@ body {
 }
 
 /* ═══════════════════════════════════════════
-   STATS PANEL (push layout — 50% screen)
+   STATS PANEL (push layout — 55% screen)
    ═══════════════════════════════════════════ */
 .stats-panel {
     position: fixed;
     top: 0;
-    right: -52vw;
-    width: 50vw;
+    right: -57vw;
+    width: 55vw;
     height: 100vh;
     background: var(--bg);
     border-left: 2px solid var(--primary);
@@ -709,7 +709,7 @@ body.stats-open {
 }
 
 body.stats-open .crt {
-    margin-right: 50vw;
+    margin-right: 55vw;
     transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -724,21 +724,71 @@ body.stats-open .game-wrapper {
 body.stats-open .panel--left {
     grid-column: 1;
     grid-row: 1;
+    animation: panelSlideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 body.stats-open .panel--right {
     grid-column: 1;
     grid-row: 2;
     width: 150px;
+    animation: panelRelocate 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 body.stats-open .board-wrapper {
     grid-column: 2;
     grid-row: 1 / 3;
+    animation: boardSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Smooth base transitions for panels */
+.panel--left,
+.panel--right {
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.board-wrapper {
+    transition: transform 0.35s ease;
 }
 
 .crt {
     transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Relocation animations */
+@keyframes panelRelocate {
+    0% {
+        opacity: 0;
+        transform: translateX(120px) translateY(-20px);
+    }
+    40% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+@keyframes panelSlideIn {
+    0% {
+        opacity: 0.6;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes boardSlide {
+    0% {
+        transform: translateX(30px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .sp-header {
