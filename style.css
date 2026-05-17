@@ -685,8 +685,8 @@ body {
 .stats-panel {
     position: fixed;
     top: 0;
-    right: -57vw;
-    width: 55vw;
+    right: -65vw;
+    width: 62vw;
     height: 100vh;
     background: var(--bg);
     border-left: 2px solid var(--primary);
@@ -709,7 +709,7 @@ body.stats-open {
 }
 
 body.stats-open .crt {
-    margin-right: 55vw;
+    margin-right: 65vw;
     transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -760,9 +760,11 @@ body.stats-open .board-wrapper {
         opacity: 0;
         transform: translateX(120px) translateY(-20px);
     }
+
     40% {
         opacity: 0.3;
     }
+
     100% {
         opacity: 1;
         transform: translateX(0) translateY(0);
@@ -774,6 +776,7 @@ body.stats-open .board-wrapper {
         opacity: 0.6;
         transform: translateX(-20px);
     }
+
     100% {
         opacity: 1;
         transform: translateX(0);
@@ -785,6 +788,7 @@ body.stats-open .board-wrapper {
         transform: translateX(30px);
         opacity: 0.8;
     }
+
     100% {
         transform: translateX(0);
         opacity: 1;
@@ -866,20 +870,21 @@ body.stats-open .board-wrapper {
 /* Cards */
 .sp-cards {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .sp-card {
     background: var(--panel);
     border: 1px solid var(--border);
-    padding: 14px 16px 12px;
+    padding: 10px 8px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    min-width: 100px;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
     box-shadow: var(--glow);
 }
 

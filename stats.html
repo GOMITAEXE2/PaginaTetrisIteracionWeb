@@ -39,11 +39,11 @@
 
     .back-link {
       font-family: var(--font);
-      font-size: 9px;
+      font-size: 12px;
       color: var(--primary);
       text-decoration: none;
       letter-spacing: 1px;
-      padding: 8px 14px;
+      padding: 10px 18px;
       border: 1px solid var(--border);
       transition: background 0.1s, color 0.1s;
     }
@@ -54,7 +54,7 @@
 
     .sp-page-title {
       font-family: var(--font);
-      font-size: 16px;
+      font-size: 21px;
       color: var(--primary-bright);
       letter-spacing: 6px;
       text-shadow: 0 0 16px var(--primary);
@@ -69,7 +69,7 @@
 
     .sps__head {
       font-family: var(--font);
-      font-size: 10px;
+      font-size: 13px;
       color: var(--primary);
       letter-spacing: 3px;
       text-shadow: 0 0 12px rgba(157,78,221,0.3);
@@ -89,18 +89,18 @@
     .gs-card {
       background: var(--panel);
       border: 1px solid var(--border);
-      padding: 14px 18px 12px;
+      padding: 18px 22px 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      min-width: 130px;
+      gap: 10px;
+      min-width: 140px;
       box-shadow: var(--glow);
     }
 
     .gs-card__val {
       font-family: var(--font);
-      font-size: 18px;
+      font-size: 24px;
       color: var(--yellow);
       text-shadow: 0 0 10px rgba(255,214,10,0.5);
     }
@@ -112,8 +112,8 @@
 
     .gs-card__lbl {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
-      color: rgba(199,125,255,0.50);
+      font-size: 16px;
+      color: rgba(199,125,255,0.55);
       letter-spacing: 1px;
     }
 
@@ -122,24 +122,24 @@
       width: 100%;
       border-collapse: collapse;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
+      font-size: 16px;
       line-height: 1.8;
     }
 
     .st-table th {
       font-family: var(--font);
-      font-size: 7px;
-      color: rgba(199,125,255,0.55);
+      font-size: 9px;
+      color: rgba(199,125,255,0.60);
       letter-spacing: 1px;
       text-align: left;
-      padding: 6px 8px;
+      padding: 8px 8px;
       border-bottom: 1px solid rgba(199,125,255,0.2);
     }
 
     .st-table td {
-      padding: 6px 8px;
+      padding: 8px 8px;
       border-bottom: 1px solid rgba(199,125,255,0.06);
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.65);
     }
 
     .st-table tr:hover td {
@@ -148,28 +148,33 @@
 
     .td-score {
       font-family: var(--font);
-      font-size: 11px;
+      font-size: 14px;
       color: var(--yellow) !important;
       text-shadow: 0 0 6px rgba(255,214,10,0.4);
     }
 
     .td-rank {
       font-family: var(--font);
-      font-size: 10px;
+      font-size: 13px;
       color: var(--primary-bright) !important;
     }
 
     .td-evts {
-      font-size: 10px;
+      font-size: 14px;
       color: var(--green) !important;
     }
 
     .td-date {
-      color: rgba(255,255,255,0.45) !important;
+      color: rgba(255,255,255,0.50) !important;
     }
 
     .td-dur {
-      color: rgba(199,125,255,0.4) !important;
+      color: rgba(199,125,255,0.45) !important;
+    }
+
+    .td-dist {
+      font-size: 13px;
+      color: rgba(224,170,255,0.6) !important;
     }
 
     /* analysis block */
@@ -191,15 +196,15 @@
 
     .an-item__val {
       font-family: var(--font);
-      font-size: 16px;
+      font-size: 21px;
       color: var(--green);
       text-shadow: 0 0 8px rgba(48,209,88,0.4);
     }
 
     .an-item__lbl {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
-      color: rgba(199,125,255,0.45);
+      font-size: 16px;
+      color: rgba(199,125,255,0.55);
     }
 
     .an-dist {
@@ -207,28 +212,28 @@
       flex-direction: column;
       gap: 6px;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 13px;
+      font-size: 17px;
       line-height: 1.8;
     }
 
     .an-dist__row {
       display: flex;
       justify-content: space-between;
-      padding: 4px 0;
+      padding: 5px 0;
       border-bottom: 1px solid rgba(199,125,255,0.08);
-      color: rgba(199,125,255,0.5);
+      color: rgba(224,170,255,0.55);
     }
 
     .an-dist__row span:last-child {
       font-family: var(--font);
-      font-size: 11px;
+      font-size: 15px;
       color: var(--yellow);
     }
 
     .sp-page-empty {
       text-align: center;
-      font-size: 12px;
-      color: rgba(199,125,255,0.3);
+      font-size: 16px;
+      color: rgba(199,125,255,0.35);
       padding: 20px;
     }
 
@@ -362,20 +367,22 @@
           hour:'2-digit', minute:'2-digit'
         }) : '—';
         const dur = fmtDur(s.startTime, s.endTime);
-        const evts = evtSummary(s.events || []);
         rows += `<tr>
           <td class="td-date">${date}</td>
           <td class="td-dur">${dur}</td>
           <td class="td-score">${(s.finalScore||0).toLocaleString()}</td>
           <td>${s.linesCleared||0}</td>
           <td>${s.maxLevel||1}</td>
-          <td class="td-evts">${evts}</td>
+          <td class="td-dist">${s.linesSingle||0}</td>
+          <td class="td-dist">${s.linesDouble||0}</td>
+          <td class="td-dist">${s.linesTriple||0}</td>
+          <td class="td-evts">${s.linesTetris||0}</td>
         </tr>`;
       }
 
       el.innerHTML = `<table class="st-table">
         <thead><tr>
-          <th>FECHA</th><th>DUR</th><th>SCORE</th><th>LINES</th><th>LVL</th><th>EVENTOS</th>
+          <th>FECHA</th><th>DUR</th><th>SCORE</th><th>LINES</th><th>LVL</th><th>×1</th><th>×2</th><th>×3</th><th>TETRIS</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>`;
@@ -395,13 +402,17 @@
           <td class="td-score">${(s.finalScore||0).toLocaleString()}</td>
           <td>${s.linesCleared||0}</td>
           <td>${s.maxLevel||1}</td>
+          <td class="td-dist">${s.linesSingle||0}</td>
+          <td class="td-dist">${s.linesDouble||0}</td>
+          <td class="td-dist">${s.linesTriple||0}</td>
+          <td class="td-evts">${s.linesTetris||0}</td>
           <td class="td-date">${date}</td>
         </tr>`;
       });
 
       el.innerHTML = `<table class="st-table">
         <thead><tr>
-          <th>#</th><th>SCORE</th><th>LINES</th><th>LVL</th><th>FECHA</th>
+          <th>#</th><th>SCORE</th><th>LINES</th><th>LVL</th><th>×1</th><th>×2</th><th>×3</th><th>TETRIS</th><th>FECHA</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>`;

@@ -1,0 +1,13 @@
+Github: 
+https://github.com/GOMITAEXE2/PaginaTetrisIteracionWeb/tree/main
+
+Link De La Pagina Montado Con Github:
+https://gomitaexe2.github.io/PaginaTetrisIteracionWeb/index.html
+
+EXTRA: 
+La documentacion del proyecto la realize con un agente de IA para facilitar la comprencion de quien decida leer el codigo del mismo, parte del codigo tambien fue echo por una IA los mas afectados fueron:
+Styles.css
+SFX.js
+y parte del stats-panel.js
+
+De resto el trabajo fue mas artesanal, gracias por leer mis comentarios
