@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TETRIS — STATS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ═══════════════════════════════════════════
+       STATS PAGE LAYOUT
+       ═══════════════════════════════════════════ */
+    body {
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .crt {
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .stats-page {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      width: 100%;
+    }
+
+    /* header */
+    .sp-page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .back-link {
+      font-family: var(--font);
+      font-size: 9px;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: 1px;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      transition: background 0.1s, color 0.1s;
+    }
+    .back-link:hover {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .sp-page-title {
+      font-family: var(--font);
+      font-size: 16px;
+      color: var(--primary-bright);
+      letter-spacing: 6px;
+      text-shadow: 0 0 16px var(--primary);
+    }
+
+    /* sections */
+    .sps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sps__head {
+      font-family: var(--font);
+      font-size: 10px;
+      color: var(--primary);
+      letter-spacing: 3px;
+      text-shadow: 0 0 12px rgba(157,78,221,0.3);
+      text-align: center;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(199,125,255,0.15);
+    }
+
+    /* global stat cards */
+    .gs-cards {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .gs-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 14px 18px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 130px;
+      box-shadow: var(--glow);
+    }
+
+    .gs-card__val {
+      font-family: var(--font);
+      font-size: 18px;
+      color: var(--yellow);
+      text-shadow: 0 0 10px rgba(255,214,10,0.5);
+    }
+
+    .gs-card__val--gold {
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(255,215,0,0.5);
+    }
+
+    .gs-card__lbl {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: rgba(199,125,255,0.50);
+      letter-spacing: 1px;
+    }
+
+    /* tables */
+    .st-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .st-table th {
+      font-family: var(--font);
+      font-size: 7px;
+      color: rgba(199,125,255,0.55);
+      letter-spacing: 1px;
+      text-align: left;
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(199,125,255,0.2);
+    }
+
+    .st-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(199,125,255,0.06);
+      color: rgba(255,255,255,0.6);
+    }
+
+    .st-table tr:hover td {
+      background: rgba(157,78,221,0.06);
+    }
+
+    .td-score {
+      font-family: var(--font);
+      font-size: 11px;
+      color: var(--yellow) !important;
+      text-shadow: 0 0 6px rgba(255,214,10,0.4);
+    }
+
+    .td-rank {
+      font-family: var(--font);
+      font-size: 10px;
+      color: var(--primary-bright) !important;
+    }
+
+    .td-evts {
+      font-size: 10px;
+      color: var(--green) !important;
+    }
+
+    .td-date {
+      color: rgba(255,255,255,0.45) !important;
+    }
+
+    .td-dur {
+      color: rgba(199,125,255,0.4) !important;
+    }
+
+    /* analysis block */
+    .an-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .an-item {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: var(--glow);
+    }
+
+    .an-item__val {
+      font-family: var(--font);
+      font-size: 16px;
+      color: var(--green);
+      text-shadow: 0 0 8px rgba(48,209,88,0.4);
+    }
+
+    .an-item__lbl {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: rgba(199,125,255,0.45);
+    }
+
+    .an-dist {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .an-dist__row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(199,125,255,0.08);
+      color: rgba(199,125,255,0.5);
+    }
+
+    .an-dist__row span:last-child {
+      font-family: var(--font);
+      font-size: 11px;
+      color: var(--yellow);
+    }
+
+    .sp-page-empty {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(199,125,255,0.3);
+      padding: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .gs-cards { flex-direction: column; align-items: stretch; }
+      .gs-card { min-width: auto; }
+      .an-grid { grid-template-columns: 1fr; }
+      .st-table { font-size: 10px; }
+      .st-table th { font-size: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="crt">
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <div class="stats-page">
+
+      <!-- Header -->
+      <div class="sp-page-header">
+        <a href="index.html" class="back-link">← VOLVER AL JUEGO</a>
+        <h1 class="sp-page-title">STATS</h1>
+      </div>
+
+      <!-- Section A: Global Stats -->
+      <section class="sps" id="sec-global">
+        <h2 class="sps__head">══ GLOBAL STATS ══</h2>
+        <div class="gs-cards" id="gs-cards">
+          <p class="sp-page-empty">Conectando…</p>
+        </div>
+      </section>
+
+      <!-- Section B: Recent Sessions -->
+      <section class="sps" id="sec-recent">
+        <h2 class="sps__head">══ ÚLTIMAS SESIONES ══</h2>
+        <div id="gs-recent"><p class="sp-page-empty">Cargando…</p></div>
+      </section>
+
+      <!-- Section C: Leaderboard -->
+      <section class="sps" id="sec-ranking">
+        <h2 class="sps__head">══ RANKING TOP 10 ══</h2>
+        <div id="gs-ranking"><p class="sp-page-empty">Cargando…</p></div>
+      </section>
+
+      <!-- Section D: Event Analysis -->
+      <section class="sps" id="sec-analysis">
+        <h2 class="sps__head">══ ANÁLISIS DE EVENTOS ══</h2>
+        <div id="gs-analysis"><p class="sp-page-empty">Cargando…</p></div>
+      </section>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { db } from './js/firebase-config.js';
+    import {
+      collection, doc, query, orderBy, limit,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const $ = (id) => document.getElementById(id);
+
+    if (!db) {
+      $('gs-cards').innerHTML = '<p class="sp-page-empty">Firebase no conectado.</p>';
+    } else {
+      // A) Global stats — real-time
+      onSnapshot(doc(db, 'stats', 'global'), (snap) => {
+        const d = snap.exists() ? snap.data() : {};
+        renderGlobal(d);
+      }, (err) => {
+        console.warn('stats global:', err.message);
+        $('gs-cards').innerHTML = '<p class="sp-page-empty">Error al conectar</p>';
+      });
+
+      // B + C + D) All sessions — derive recent, ranking, and analysis
+      const sessQ = query(collection(db, 'sessions'), orderBy('startTime', 'desc'));
+      onSnapshot(sessQ, (snap) => {
+        const sessions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderRecent(sessions.slice(0, 10));
+        // Ranking: sort by score desc
+        const byScore = [...sessions].sort((a, b) => (b.finalScore || 0) - (a.finalScore || 0));
+        renderRanking(byScore.slice(0, 10));
+        renderAnalysis(sessions);
+      }, (err) => {
+        console.warn('stats sessions:', err.message);
+      });
+    }
+
+    /* ── Render functions ──────────────────────── */
+
+    function renderGlobal(d) {
+      const games = d.totalGames || 0;
+      const lines = d.totalLines || 0;
+      const hi    = d.highScore  || 0;
+      const avgS  = games ? Math.round(hi / games) : 0; // approx
+      const avgL  = games ? (lines / games).toFixed(1) : '0';
+
+      $('gs-cards').innerHTML = `
+        <div class="gs-card"><span class="gs-card__val">${games}</span><span class="gs-card__lbl">PARTIDAS JUGADAS</span></div>
+        <div class="gs-card"><span class="gs-card__val gs-card__val--gold">${hi.toLocaleString()}</span><span class="gs-card__lbl">HI-SCORE</span></div>
+        <div class="gs-card"><span class="gs-card__val">${lines.toLocaleString()}</span><span class="gs-card__lbl">TOTAL LÍNEAS</span></div>
+        <div class="gs-card"><span class="gs-card__val">${avgS.toLocaleString()}</span><span class="gs-card__lbl">AVG SCORE</span></div>
+        <div class="gs-card"><span class="gs-card__val">${avgL}</span><span class="gs-card__lbl">AVG LÍNEAS</span></div>`;
+    }
+
+    function renderRecent(sessions) {
+      const el = $('gs-recent');
+      if (!sessions.length) { el.innerHTML = '<p class="sp-page-empty">Sin sesiones registradas.</p>'; return; }
+
+      let rows = '';
+      for (const s of sessions) {
+        const date = s.startTime ? new Date(s.startTime).toLocaleString('es-AR', {
+          day:'2-digit', month:'2-digit', year:'2-digit',
+          hour:'2-digit', minute:'2-digit'
+        }) : '—';
+        const dur = fmtDur(s.startTime, s.endTime);
+        const evts = evtSummary(s.events || []);
+        rows += `<tr>
+          <td class="td-date">${date}</td>
+          <td class="td-dur">${dur}</td>
+          <td class="td-score">${(s.finalScore||0).toLocaleString()}</td>
+          <td>${s.linesCleared||0}</td>
+          <td>${s.maxLevel||1}</td>
+          <td class="td-evts">${evts}</td>
+        </tr>`;
+      }
+
+      el.innerHTML = `<table class="st-table">
+        <thead><tr>
+          <th>FECHA</th><th>DUR</th><th>SCORE</th><th>LINES</th><th>LVL</th><th>EVENTOS</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    function renderRanking(sessions) {
+      const el = $('gs-ranking');
+      if (!sessions.length) { el.innerHTML = '<p class="sp-page-empty">Sin datos.</p>'; return; }
+
+      let rows = '';
+      sessions.forEach((s, i) => {
+        const date = s.startTime ? new Date(s.startTime).toLocaleDateString('es-AR', {
+          day:'2-digit', month:'2-digit', year:'2-digit'
+        }) : '—';
+        rows += `<tr>
+          <td class="td-rank">#${i+1}</td>
+          <td class="td-score">${(s.finalScore||0).toLocaleString()}</td>
+          <td>${s.linesCleared||0}</td>
+          <td>${s.maxLevel||1}</td>
+          <td class="td-date">${date}</td>
+        </tr>`;
+      });
+
+      el.innerHTML = `<table class="st-table">
+        <thead><tr>
+          <th>#</th><th>SCORE</th><th>LINES</th><th>LVL</th><th>FECHA</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    function renderAnalysis(sessions) {
+      const el = $('gs-analysis');
+      let tetris = 0, lvlUp = 0;
+      const dist = {1:0, 2:0, 3:0, 4:0};
+
+      for (const s of sessions) {
+        for (const ev of (s.events || [])) {
+          if (ev.type === 'tetris')        { tetris++; dist[4]++; }
+          if (ev.type === 'level_up')      lvlUp++;
+          if (ev.type === 'lines_cleared') dist[ev.count] = (dist[ev.count]||0) + 1;
+        }
+      }
+
+      el.innerHTML = `
+        <div class="an-grid">
+          <div class="an-item"><span class="an-item__val">${tetris}</span><span class="an-item__lbl">TETRIS (4 líneas)</span></div>
+          <div class="an-item"><span class="an-item__val">${lvlUp}</span><span class="an-item__lbl">LEVEL UPS</span></div>
+        </div>
+        <h3 class="sps__head" style="margin-top:16px;">── DISTRIBUCIÓN ──</h3>
+        <div class="an-dist">
+          <div class="an-dist__row"><span>1 línea</span><span>${dist[1]}</span></div>
+          <div class="an-dist__row"><span>2 líneas</span><span>${dist[2]}</span></div>
+          <div class="an-dist__row"><span>3 líneas</span><span>${dist[3]}</span></div>
+          <div class="an-dist__row"><span>4 líneas (TETRIS)</span><span>${dist[4]}</span></div>
+        </div>`;
+    }
+
+    /* ── utils ──────────────────────────────────── */
+
+    function fmtDur(start, end) {
+      if (!start || !end) return '--:--';
+      const ms = new Date(end) - new Date(start);
+      const s = Math.floor(ms / 1000);
+      return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    }
+
+    function evtSummary(events) {
+      let t = 0, l = 0;
+      for (const e of events) {
+        if (e.type === 'tetris') t++;
+        if (e.type === 'level_up') l++;
+      }
+      const p = [];
+      if (t) p.push(`${t}× TETRIS`);
+      if (l) p.push(`${l}× LVL UP`);
+      return p.join(' · ') || '—';
+    }
+  </script>
+</body>
+</html>

@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TETRIS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-</head>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" /></head>
 <body>
 
   <div class="crt" id="crt-root">
@@ -75,14 +74,6 @@
           <canvas id="next" width="130" height="130"></canvas>
         </div>
         <button class="btn btn--sm" id="btn-pause">PAUSE</button>
-        <button class="btn btn--sm" id="btn-stats">STATS</button>
-
-        <label class="retro-check" for="chk-inline">
-          <input type="checkbox" id="chk-inline" />
-          <span class="retro-check__box"></span>
-          <span class="retro-check__label">VER EN PANTALLA</span>
-        </label>
-
         <div class="controls-hint">
           <p>← → MOVER</p>
           <p>↑/Z ROTAR</p>
@@ -106,29 +97,6 @@
 
   </div>
 
-  <!-- Stats slide-in panel -->
-  <div class="stats-panel" id="stats-panel">
-    <div class="sp-header">
-      <span class="sp-title">STATS</span>
-      <button class="sp-close" id="sp-close">[X]</button>
-    </div>
-    <div class="sp-body" id="sp-body">
-      <div class="sp-section">
-        <h3 class="sp-section__head">══ GLOBAL ══</h3>
-        <div id="sp-global"><p class="sp-empty">Cargando…</p></div>
-      </div>
-      <div class="sp-section">
-        <h3 class="sp-section__head">══ RECIENTES ══</h3>
-        <div id="sp-recent"><p class="sp-empty">Cargando…</p></div>
-      </div>
-      <div class="sp-section">
-        <h3 class="sp-section__head">══ EVENTOS ══</h3>
-        <div id="sp-analysis"><p class="sp-empty">Cargando…</p></div>
-      </div>
-    </div>
-  </div>
-
   <script type="module" src="js/game.js"></script>
-  <script type="module" src="js/stats-panel.js"></script>
 </body>
 </html>

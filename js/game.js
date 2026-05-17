@@ -562,4 +562,4 @@ class Tetris {
 
 // --- bootstrap ---
 
-new Tetris();
+window.game = new Tetris();
