@@ -227,9 +227,13 @@ class Tetris {
             sfxLineClear(cleared);
         }
 
-        // Actually remove the rows
-        for (const r of clearedRows) {
-            this.board.splice(r, 1);
+        // Eliminar físicamente las filas completadas del tablero de forma segura.
+        // Filtramos las filas que no están en la lista de completadas para evitar el bug clásico
+        // de desplazamiento de índices (index shifting) al usar splice en bucle de abajo a arriba.
+        this.board = this.board.filter((_, index) => !clearedRows.includes(index));
+        
+        // Rellena el tope del tablero con nuevas filas vacías para mantener las dimensiones originales.
+        while (this.board.length < ROWS) {
             this.board.unshift(Array(COLS).fill(null));
         }
 
