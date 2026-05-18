@@ -106,7 +106,10 @@ class Tetris {
         this.level = 1;
         this.running = true;
         this.paused = false;
-        this.hiScore = await getHighScore();
+        this.hiScore = Math.max(
+            parseInt(localStorage.getItem('tetris_hiscore') ?? '0'),
+            await getHighScore()
+        );
         this.next = this._randomPiece();
         this._spawn();
         this._updateUI();
@@ -489,6 +492,7 @@ class Tetris {
         document.getElementById('lines').textContent = f(this.lines, 4);
         document.getElementById('level').textContent = f(this.level, 2);
         document.getElementById('hiscore').textContent = f(Math.max(this.hiScore, this.score), 6);
+        localStorage.setItem('tetris_hiscore', Math.max(this.score, this.hiScore));
     }
 
     // --- input ---
