@@ -11,6 +11,8 @@ import {
     sfxGameOver, sfxSoftDrop, sfxStart,
 } from './SFX.js';
 
+import { wsClient } from './websocket-client.js';
+
 // --- constants ---
 
 const COLS = 10;
@@ -493,6 +495,11 @@ class Tetris {
         document.getElementById('level').textContent = f(this.level, 2);
         document.getElementById('hiscore').textContent = f(Math.max(this.hiScore, this.score), 6);
         localStorage.setItem('tetris_hiscore', Math.max(this.score, this.hiScore));
+
+        // Enviar evento al WebSocket si el score cambió
+        if (this.score > 0) {
+            wsClient.sendEvent("score", this.score);
+        }
     }
 
     // --- input ---
@@ -571,3 +578,4 @@ class Tetris {
 // --- bootstrap ---
 
 window.game = new Tetris();
+wsClient.init();
