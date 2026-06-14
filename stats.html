@@ -7,6 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  
+  <!-- PWA Requirements -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#c77dff" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <style>
     /* ═══════════════════════════════════════════
        STATS PAGE LAYOUT
@@ -464,6 +469,21 @@
       if (t) p.push(`${t}× TETRIS`);
       if (l) p.push(`${l}× LVL UP`);
       return p.join(' · ') || '—';
+    }
+  </script>
+
+  <!-- Registro del Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('ServiceWorker registrado con éxito en el scope:', registration.scope);
+          })
+          .catch((error) => {
+            console.error('El registro de ServiceWorker falló:', error);
+          });
+      });
     }
   </script>
 </body>
