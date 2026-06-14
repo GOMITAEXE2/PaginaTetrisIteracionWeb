@@ -1,7 +1,7 @@
 {
   "name": "Retro Tetris PWA",
   "short_name": "Tetris",
-  "description": "Un clásico juego de Tetris web con soporte offline.",
+  "description": "juego de Tetris web con soporte offline.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0a0a0a",
